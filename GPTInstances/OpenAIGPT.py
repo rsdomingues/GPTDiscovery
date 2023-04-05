@@ -33,11 +33,11 @@ class OpenAIGPT:
             # Make API call to OpenAI to generate an embedding
             response = openai.Embedding.create(
                 model=self.engine, 
-                text=text
+                input = text
             )
 
             # Extract and return the embedding vector
-            embedding = response['embedding']
+            embedding = response['data'][0]['embedding']
             return embedding
 
         except openai.APIError as e:

@@ -1,7 +1,7 @@
 from GPTInstances import OpenAIGPT
 
 # Start the GPT Instance we want to use
-openai = OpenAIGPT.OpenAIGPT(engine="text-embedding-ada-002")
+openai = OpenAIGPT.OpenAIGPT(engine="")
 
 # Main loop for taking user input and generating responses
 while True:
@@ -12,4 +12,4 @@ while True:
     vector = openai.generate_embedding(prompt)
     
     # Print the generated text
-    print("ChatGPT: " + vector)
+    print(f"Embedding size: {len(vector)}")
