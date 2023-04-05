@@ -1,7 +1,7 @@
 from GPTInstances import OpenAIGPT
 
 # Start the GPT Instance we want to use
-openai = OpenAIGPT.OpenAIGPT(engine="")
+gpt = OpenAIGPT.OpenAIGPT()
 
 # Main loop for taking user input and generating responses
 while True:
@@ -9,7 +9,7 @@ while True:
     prompt = input("You: ")
     
     # Call the function with the user's prompt
-    vector = openai.generate_embedding(prompt)
+    response = gpt.prompt(prompt)
     
     # Print the generated text
-    print(f"Embedding size: {len(vector)}")
+    print(f"ChatGPT: {response}")

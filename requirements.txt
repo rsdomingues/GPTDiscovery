@@ -1,1 +1,4 @@
 openai
+numpy
+beautifulsoup4
+supabase

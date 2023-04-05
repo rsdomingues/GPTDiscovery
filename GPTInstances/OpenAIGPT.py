@@ -2,7 +2,7 @@ import openai
 import os
 
 class OpenAIGPT:
-    def __init__(self, engine="text-davinci-002"):
+    def __init__(self, engine="text-davinci-003"):
         # Init OpenAI API key
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         self.engine = engine
