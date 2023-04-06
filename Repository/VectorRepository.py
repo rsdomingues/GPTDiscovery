@@ -19,10 +19,21 @@ class VectorRepository:
             # Return the error message
             return f"Error: {e}"
         
+    def dump_repository(self):
+        try:
+            # Make API call to Supabase
+            data, count = self.supabase.table('articles').delete("*").execute()
+            
+            # Extract and return the response string
+            return count
+        except Exception as e:
+            # Return the error message
+            return f"Error: {e}"
+        
     def find_closest_article(self, vector):
         try:
             # Make API call to Supabase
-            data, count = self.supabase.rpc("find_closest_article", {"embedding":vector}).execute()
+            data = self.supabase.rpc("find_closest_article", {"embedding":vector, "match_threshold":0.78, "match_count":3}).execute()
             
             # Extract and return the response string
             return data

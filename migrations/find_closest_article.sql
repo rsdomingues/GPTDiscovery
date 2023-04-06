@@ -12,7 +12,7 @@ begin
   from articles
 
   -- The dot product is negative because of a Postgres limitation, so we negate it
-  and (articles.embedding <#> embedding) * -1 > match_threshold
+  where (articles.embedding <#> embedding) * -1 > match_threshold
 
   -- OpenAI embeddings are normalized to length 1, so
   -- cosine similarity and dot product will produce the same results.

@@ -1,12 +1,9 @@
-import requests
-from bs4 import BeautifulSoup
 from GPTInstances import OpenAIGPT
 from Repository import VectorRepository
 
 # Start the GPT Instance we want to use
 gpt = OpenAIGPT.OpenAIGPT(engine="text-embedding-ada-002")
 repo = VectorRepository.VectorRepository()
-
 
 # Main loop for taking user input and generating responses
 while True:
@@ -15,11 +12,7 @@ while True:
     
     #find closest article
     prompt_embedding = gpt.generate_embedding(prompt)
-    article = repo.find_closest_article(prompt_embedding)
-
-    # Call the function with the user's prompt
-    response = gpt.prompt(prompt)
+    response = repo.find_closest_article(prompt_embedding)
     
-    
-    # Print the generated text
-    print(f"ChatGPT: {response}")
+    for article in response.data:
+        print(f"Article: {article['title']} has a similarity of {article['similarity']}")

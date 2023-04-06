@@ -42,8 +42,8 @@ def get_articles(articles):
         soup = BeautifulSoup(response.content, 'html.parser')
         try:
             #parse the article
-            article = soup.find('article').get_text()
-            title = soup.find('h1', {'class': 'devsite-page-title'}).get_text()
+            article = soup.find('article').get_text().strip().replace("\n", " ")
+            title = soup.find('h1', {'class': 'devsite-page-title'}).get_text().replace("\n", " ")
             
             # Call the function with the user's prompt
             vector = gpt.generate_embedding(article)
@@ -52,6 +52,7 @@ def get_articles(articles):
             print(f"'{title}' -> Embedding Generated with size: {len(vector)}")
             
             # Save the vector to the database
+            repo.dump_repository()
             repo.save(title, vector, article)
 
             print(f"'{title}' -> Embedding Saved")
