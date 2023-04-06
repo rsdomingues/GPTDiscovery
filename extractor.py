@@ -36,24 +36,42 @@ dora_articles = [ 'https://cloud.google.com/solutions/devops/devops-tech-test-au
     'https://cloud.google.com/architecture/devops/devops-culture-transformational-leadership'
 ]
 
+
+def clean_article(text):
+    split_text = text.split("\n")
+    has_started = False
+    final_article = ""
+    for partial in split_text:
+        if (not has_started and partial.startswith("Note: ")):
+            has_started = True
+
+        if (has_started and partial.startswith("For links to other articles")):
+            break
+
+        if(has_started and len(partial) >= 20):
+            final_article += partial + " "
+
+    return final_article
+
 def get_articles(articles):
     for url in articles:
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
         try:
             #parse the article
-            article = soup.find('article').get_text().strip().replace("\n", " ")
+            article = soup.find('article').get_text()
             title = soup.find('h1', {'class': 'devsite-page-title'}).get_text().replace("\n", " ")
             
+            cleaned_article = clean_article(article)
+            # # Print the generated text
+            print(f"Procesing page '{title}' that has aprox {len(cleaned_article)/4} tokens")
+                
             # Call the function with the user's prompt
-            vector = gpt.generate_embedding(article)
+            vector = gpt.generate_embedding(cleaned_article)
             
-            # Print the generated text
-            print(f"'{title}' -> Embedding Generated with size: {len(vector)}")
-            
-            # Save the vector to the database
+            # Refresh the content of the repository
             repo.dump_repository()
-            repo.save(title, vector, article)
+            repo.save(title, vector, cleaned_article)
 
             print(f"'{title}' -> Embedding Saved")
 
