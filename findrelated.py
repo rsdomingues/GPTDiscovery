@@ -2,7 +2,7 @@ from GPTInstances import OpenAIGPT
 from Repository import VectorRepository
 
 # Start the GPT Instance we want to use
-gpt = OpenAIGPT.OpenAIGPT(engine="text-embedding-ada-002")
+gpt = OpenAIGPT.OpenAIGPT()
 repo = VectorRepository.VectorRepository()
 
 # Main loop for taking user input and generating responses

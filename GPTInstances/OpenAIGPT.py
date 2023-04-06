@@ -13,10 +13,7 @@ class OpenAIGPT:
             response = openai.Completion.create(
                 engine=self.engine,
                 prompt=prompt,
-                max_tokens=1024,
-                n=1,
-                stop=None,
-                temperature=0.7
+                max_tokens=2048
             )
        
             # Extract and return the response string
@@ -32,7 +29,7 @@ class OpenAIGPT:
         try:
             # Make API call to OpenAI to generate an embedding
             response = openai.Embedding.create(
-                model=self.engine, 
+                model = "text-embedding-ada-002", 
                 input = text
             )
 

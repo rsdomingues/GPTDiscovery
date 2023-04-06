@@ -1,13 +1,14 @@
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, PageElement, Tag
 from GPTInstances import OpenAIGPT
 from Repository import VectorRepository
 
 # Start the GPT Instance we want to use
-gpt = OpenAIGPT.OpenAIGPT(engine="text-embedding-ada-002")
+gpt = OpenAIGPT.OpenAIGPT()
 repo = VectorRepository.VectorRepository()
 
-dora_articles = [ 'https://cloud.google.com/solutions/devops/devops-tech-test-automation', 
+dora_articles = [ 
+    'https://cloud.google.com/solutions/devops/devops-tech-test-automation', 
     'https://cloud.google.com/solutions/devops/devops-tech-deployment-automation', 
     'https://cloud.google.com/solutions/devops/devops-tech-trunk-based-development', 
     'https://cloud.google.com/solutions/devops/devops-tech-shifting-left-on-security', 
@@ -37,48 +38,59 @@ dora_articles = [ 'https://cloud.google.com/solutions/devops/devops-tech-test-au
 ]
 
 
-def clean_article(text):
-    split_text = text.split("\n")
-    has_started = False
-    final_article = ""
-    for partial in split_text:
-        if (not has_started and partial.startswith("Note: ")):
-            has_started = True
+def clean_text(text):
+    return text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
 
-        if (has_started and partial.startswith("For links to other articles")):
-            break
+def get_sections(article):
+    section = ""
+    sections = list()
+    should_capture = False
+    
+    for element in article.descendants:
+        
+        if(element.name == 'h1'):
+            section += f"# {clean_text(element.get_text())}\n\n"
+            should_capture = True
+        
+        if (element.name == 'h2'):
+            sections.append(section)
+            section = f"# {clean_text(element.get_text())}\n\n"
+            if(element.get_text() == "What's next"):
+                break
+        
+        if (should_capture and type(element) == Tag):
+            if (element.name == 'p'):
+                section += f"{clean_text(element.get_text())}\n\n"
+            if (element.name == 'li'):
+                section += f" * {clean_text(element.get_text())}\n"
+    
+    return sections
 
-        if(has_started and len(partial) >= 20):
-            final_article += partial + " "
-
-    return final_article
-
-def get_articles(articles):
-    for url in articles:
+def get_articles(urls):
+    for url in urls:
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
         try:
             #parse the article
-            article = soup.find('article').get_text()
-            title = soup.find('h1', {'class': 'devsite-page-title'}).get_text().replace("\n", " ")
+            article: PageElement = soup.find('article')
+            title = clean_text(soup.find('h1', {'class': 'devsite-page-title'}).get_text())
+            sections = get_sections(article)
             
-            cleaned_article = clean_article(article)
-            # # Print the generated text
-            print(f"Procesing page '{title}' that has aprox {len(cleaned_article)/4} tokens")
+            # Print the generated text
+            print(f"Procesing page '{title}' that has {len(sections)} sections")
+
+            for section in sections:
+                # Call the function with the user's prompt
+                vector = gpt.generate_embedding(section)
                 
-            # Call the function with the user's prompt
-            vector = gpt.generate_embedding(cleaned_article)
-            
-            # Refresh the content of the repository
-            repo.dump_repository()
-            repo.save(title, vector, cleaned_article)
+                # Refresh the content of the repository
+                repo.dump_repository()
+                repo.save(title, vector, section)
 
-            print(f"'{title}' -> Embedding Saved")
-
+                print(f"'{title}' -> Embedding Saved")
 
         except Exception as e:
             print(f"Error with {e}")
-
 
 if(__name__ == "__main__"):
     get_articles(dora_articles)
