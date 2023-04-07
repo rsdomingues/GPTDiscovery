@@ -43,18 +43,21 @@ def clean_text(text):
 
 def get_sections(article):
     section = ""
-    sections = list()
+    sections = dict()
+    section_name = ""
     should_capture = False
     
     for element in article.descendants:
         
         if(element.name == 'h1'):
-            section += f"# {clean_text(element.get_text())}\n\n"
+            section_name = clean_text(element.get_text())
+            section += f"# {section_name}\n\n"
             should_capture = True
         
         if (element.name == 'h2'):
-            sections.append(section)
-            section = f"# {clean_text(element.get_text())}\n\n"
+            sections.update({section_name: section})
+            section_name = clean_text(element.get_text())
+            section = f"# {section_name}\n\n"
             if(element.get_text() == "What's next"):
                 break
         
@@ -79,15 +82,15 @@ def get_articles(urls):
             # Print the generated text
             print(f"Procesing page '{title}' that has {len(sections)} sections")
 
-            for section in sections:
+            for section_name, section in sections.items():
                 # Call the function with the user's prompt
                 vector = gpt.generate_embedding(section)
                 
                 # Refresh the content of the repository
                 repo.dump_repository()
-                repo.save(title, vector, section)
+                repo.save(f"{title} | {section_name}", vector, section)
 
-                print(f"'{title}' -> Embedding Saved")
+                print(f"'{title} | {section_name}' -> Embedding Saved")
 
         except Exception as e:
             print(f"Error with {e}")

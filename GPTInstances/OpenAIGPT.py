@@ -13,7 +13,7 @@ class OpenAIGPT:
             response = openai.Completion.create(
                 engine=self.engine,
                 prompt=prompt,
-                max_tokens=2048
+                max_tokens=1024
             )
        
             # Extract and return the response string

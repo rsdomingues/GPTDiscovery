@@ -13,6 +13,8 @@ while True:
     #find closest article
     prompt_embedding = gpt.generate_embedding(prompt)
     response = repo.find_closest_article(prompt_embedding)
+    print(f"Found {len(response.data)} sections to be considered")
     
+    #show the identified articles
     for article in response.data:
         print(f"Article: {article['title']} has a similarity of {article['similarity']}")
