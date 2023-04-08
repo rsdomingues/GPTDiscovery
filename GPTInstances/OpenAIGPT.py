@@ -7,6 +7,9 @@ class OpenAIGPT:
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         self.engine = engine
 
+    def finetune():
+        openai.FineTune.create()
+
     def prompt(self, prompt):
         try:
             # Make API call to OpenAI
