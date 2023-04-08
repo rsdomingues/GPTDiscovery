@@ -7,8 +7,21 @@ class OpenAIGPT:
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         self.engine = engine
 
-    def finetune():
-        openai.FineTune.create()
+    def schedulle_finetune(training_files):
+        try:
+            #Configure the fine tunning model
+            training_configuration = {
+                "model": "text-embedding-ada-002",
+                "model_name": "ciandt-devops-ada-001",
+                "description": "Model to classify DevOps articles",
+                "training_files": training_files,
+                "finetune": True
+            }
+            #schedule the fine tunning model
+            return openai.FineTune.create()
+        except openai.APIError as e:
+            # Return the error message
+            return f"Error: {e.json_body['error']}"
 
     def prompt(self, prompt):
         try:
@@ -25,8 +38,6 @@ class OpenAIGPT:
         except openai.APIError as e:
             # Return the error message
             return f"Error: {e.json_body['error']}"
-        
-    import openai
 
     def generate_embedding(self,text):
         try:
