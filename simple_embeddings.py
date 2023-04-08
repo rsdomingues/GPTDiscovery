@@ -13,3 +13,4 @@ while True:
     
     # Print the generated text
     print(f"Embedding size: {len(vector)}")
+    print(f"Embedding: {vector}")
