@@ -6,7 +6,7 @@ gpt = OpenAIGPT.OpenAIGPT()
 def finetune():
     try:
         # Make API call to OpenAI
-        response = gpt.finetune(["./data/finetuning_data.json"]"])
+        response = gpt.schedulle_finetune(["./data/finetuning_data.json"])
         return response
     except Exception as e:
         print(f"Error: {e}")
