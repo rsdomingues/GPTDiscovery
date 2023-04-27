@@ -44,7 +44,7 @@ class VectorRepository:
     def find_closest_article(self, vector):
         try:
             # Make API call to Supabase
-            data = self.supabase.rpc("find_closest_article", {"embedding":vector, "match_threshold":0.35, "match_count":10}).execute()
+            data = self.supabase.rpc("find_closest_article", {"embedding":vector, "match_threshold":0.35, "match_count":3}).execute()
             
             # Extract and return the response string
             return data
